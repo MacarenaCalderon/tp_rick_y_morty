@@ -1,0 +1,44 @@
+import rick_y_morty.*
+
+describe "tests de Rick y Morty" {
+
+	// objetos que se utilizan en diferentes tests
+	const beth = new Beth(100)
+	const morty = new Morty(50)
+	const summer = new Summer(80)
+	const rick = new Rick(#{ beth, morty, summer }, null, 80)
+
+	test "rick no puede irse a una aventura con morty porque llevaria su nivel de demencia a mas de 100" {
+		rick.acompaniante(morty)
+		assert.notThat(rick.puedeIrDeAventura())
+	}
+
+	test "si rick va de aventura con beth su demencia queda en 60" {
+		rick.acompaniante(beth)
+		rick.irDeAventura()
+		assert.equals(30,rick.demencia())
+	}
+	
+	test "cuando morty se va de aventura su salud mental disminuye 30 puntos, y queda en 20"{
+		morty.irDeAventura()
+		assert.equals(20, morty.saludMental())
+	}
+	
+	test "summer puede ir de aventura si es miercoles, hoy no es entonces no puede ir de aventura"{
+		assert.notThat(summer.puedeIrDeAventura())
+	}
+	
+	test "jerry no puede irse de aventuras "{
+		assert.notThat(jerry.puedeIrDeAventura())
+	}
+
+	
+	test "si rick no puede irse de aventura, como pasa si tiene de acompañante a jerry, 
+         se convierte en pepinillo, y su demencia queda en 40"{
+		rick.acompaniante(jerry)
+		rick.irDeAventura()
+		assert.equals(40, rick.demencia())
+	}
+
+}
+

@@ -1,70 +1,124 @@
+class Personaje {
 
+	method irDeAventura()
 
-object rick{
-	var property acompaniante=[]
-	var property demencia=10;
+	method puedeIrDeAventura()
+
+}
+
+class Rick inherits Personaje {
+
+	var property familiares
+	var property acompaniante
+	var property demencia
+
+	constructor(unosFamiliares, unAcompaniante, unaDemencia) {
+		familiares = unosFamiliares
+		acompaniante = unAcompaniante
+		demencia = unaDemencia
+	}
 	
-	method irDeAventura(_acompaniante){
-		if(_acompaniante.acompaniarARick()<100 && _acompaniante.puedeIrAventura()){
-			
+	method eligeFamiliar()={acompaniante = familiares.anyOne()}
+
+	override method puedeIrDeAventura() {
+		if (acompaniante == null) {
+			self.eligeFamiliar()
 		}
-		
-		else{
-			self.convertirEnPepinillo()
-		}			
-			
+		return (demencia+acompaniante.modificarDemencia()) < 100
+
 	}
-    method convertirEnPepinillo(){demencia=demencia/2}
+
+	override method irDeAventura() {
+		if (acompaniante.puedeIrDeAventura() && self.puedeIrDeAventura()) {
+			acompaniante.acompaniarA(self)
+			demencia+=acompaniante.modificarDemencia()
+		} else {
+			self.convertirseEnPepinillo()
+		}
+	}
+
+	method convertirseEnPepinillo() {
+		demencia = demencia / 2
+	}
+
 }
 
-class Acompaniante{
-	method puedeIrAventura()=true
-	method acompaniarARick()
-}
+class Familiar inherits Personaje {
 
-object morty inherits Acompaniante{
-	var saludMental=2
-	override method acompaniarARick(){
-		self.puedeIrAventura()
-		rick.acompaniante().add(self)
-		saludMental-=30
-		return rick.demencia()+50
+	var property modificarDemencia
+
+	constructor(unmodificarDemencia) {
+		modificarDemencia = unmodificarDemencia
+	}
+
+	method acompaniarA(alguien) {
+		alguien.demencia(alguien.demencia()+modificarDemencia)
 	}
 	
-	
+
+
 }
 
-object beth inherits Acompaniante{
-	var afecto=2
-	override method acompaniarARick(){
-		rick.acompaniante().add(self)
-		afecto+=10
-		return rick.demencia()-20
-	}	
-	
+class Morty inherits Familiar {
+
+	var property saludMental
+
+	constructor(unaSaludMental) = super(50) {
+		saludMental = unaSaludMental
+	}
+
+	override method puedeIrDeAventura() = true
+
+	override method irDeAventura() {
+		saludMental -= 30
+	}
+
+	override method acompaniarA(alguien) {
+		if (self.puedeIrDeAventura()) {
+			self.irDeAventura()
+			alguien.acompaniante(self)
+		}
+	}
+
 }
 
-object summer inherits Acompaniante{
-	var hoy=new Date()
-	var afecto=10
-	override method puedeIrAventura(){return hoy==wednesday}
-    
-	override method acompaniarARick(){
-		rick.acompaniante().add(self)
-		afecto+=10
-		return rick.demencia()-20
-	}	
-	
+class FamiliarMujer inherits Familiar {
+
+	var property afecto
+
+	constructor(unAfecto) = super(-50) {
+		afecto = unAfecto
+	}
+
+	override method acompaniarA(alguien) {
+		if (self.puedeIrDeAventura()) {
+			alguien.acompaniante(self)
+			self.irDeAventura()
+		}
+	}
+
+	override method puedeIrDeAventura() = true
+
+	override method irDeAventura() {
+		afecto -= 30
+	}
+
 }
 
-object jerry inherits Acompaniante{
+class Beth inherits FamiliarMujer {
 
-	override method puedeIrAventura()=false
-    
-	override method acompaniarARick(){
-        rick.acompaniante().add(self)
-		return rick.demencia()
-	}	
-	
-}	
-	
+}
+
+class Summer inherits FamiliarMujer {
+
+	var hoy = new Date()
+
+	override method puedeIrDeAventura() {
+		return hoy == wednesday
+	}
+
+}
+
+object jerry {
+	method puedeIrDeAventura()=false
+}
